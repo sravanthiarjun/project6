@@ -1,4 +1,5 @@
 Step-1
+
 1)Create an amazon account.
 
 2)Create an instance in lightsail.aws.amazon.com
