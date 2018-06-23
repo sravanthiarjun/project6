@@ -1,217 +1,262 @@
-About
-This is the Udacity project 5 about the Configuring the Linux the server.
+Step-1
+1)Create an amazon account.
 
-Server Details
-Server IP Address 13.127.109.109
+2)Create an instance in lightsail.aws.amazon.com
 
-Hosted site Url http://13.127.109.109.xip.io/
+3)Download putty.exe,puttygen.exe in puti.org
 
-How to connect as grader:
-save private key provided in your local machine and run the following command
+--Open Putty. give staticIP of instance as hostname.
 
-ssh -i path/to/privatekey -p 2200 grader@13.127.109.109
-  
-Configuring Linux Server
-Updating all packages
-sudo apt-get update
-sudo apt-get upgrade
-Creating grader User:
-sudo adduser grader
-This will add new user
+select file downloaded from shh-keys eg: LightsailDefaultPrivateKey-ap-south-1.pem click ok.then save private, yes, give some name.. save on desktop.then close it. now you will see a .ppk file on desktop.
 
-sudo nano /etc/sudoers
-Below the Root user append the following line
+From left tree, click on SSH. after, Auth. You will see browser button. click on browser, and select .ppk file and click on open. press No. username ubuntu
 
-grader  ALL=(ALL:ALL) ALL
-This will grant sudo permission to grader
+4)Create static ip in lightsail and download it.
 
-Creating a ssh key pair for grader
-On your local machine in terminal/command prompt
+5)Open putty enter your ip and add private key address.
 
-ssh-keygen
+6)Connect to grader by using the following command:
+
+ssh -i path/to/privatekey -p 2200 grader@ip address				
+7)Creating grader User:
+
+ubuntu@ip-172-26-0-113:~$ sudo apt update 	
+
+sudo adduser grader		
+Follow the following steps:
+
+sudo nano /etc/sudoers			
+Grant sudo permission to grader
+
+grader  ALL=(ALL:ALL) ALL		
+8)We have to create a ssh key pair for grader
+
+Open new terminal/command prompt and type
+
+ssh-keygen					
 This will generate public and private ssh keys which is saved to .ssh folder
 
-Then in your virtual machine change to newly created user
+9)Change ubuntu user to grader
 
-su - grader
-Create a new directory .ssh and new file authorized_keys in that directory
+sudo su - grader
+10)Create a new directory .ssh and new file authorized_keys in that directory
 
 mkdir .ssh
-sudo nano .ssh/authorized_keys
-Copy the public key with .pub extension to authorized_keys and save the file
 
-chmod 700 .ssh
+    sudo nano .ssh/authorized_keys
+11)Permissions:
+
+chmod 700 .ssh	
+
 chmod 644 .ssh/authorized_keys
 700 will give read write and execute permission to user.
+
 644 prevent other user from writting in to file. Then restart ssh server
-service ssh restart
-Now from your log in to grader with private key generated
 
-ssh -i .ssh/id_rsa grader@ipaddress 
-Changing the ssh port to 2200
-sudo nano /etc/ssh/sshd_config
-Change port 22 to port 2200
+12)sudo service ssh restart
 
-Restart the ssh server
+13)ssh -i .ssh/id_rsa grader@ipaddress
 
-service ssh restart
-Note: Before Logging using ssh add custom TCP port 2200 under lightsaail firewall in networking tab in lightsail instance console
+14)Now we have to change our port from 22 to 2200
 
-Now Login using command like this
+sudo nano /etc/ssh/sshd_config	
+Then change it.
 
-ssh -i .ssh/id_rsa -p 2200 grader@ipaddress
-Disabling ssh login as root
-sudo nano /etc/ssh/sshd_config
+15)Important thing is disabling ssh login as root
 
-make change PermitRootLogin no
+sudo nano /etc/ssh/sshd_config	
+######### make change PermitRootLogin no
 
-Configurating Ufw firewall
+16)Uncomplicated firewall(ufw) enbling:
+
 sudo ufw allow 2200/tcp
-sudo ufw allow 80/tcp
-sudo ufw allow 123/udp
-sudo ufw enable
-This will allow all required ports and enables the ufw
 
-After that
+sudo ufw allow 80/tcp	
 
-sudo ufw status
-It will display all allowed ports
+sudo ufw allow 123/udp	
 
-Changing time Zone
+sudo ufw enable		
+17)For viewing ports type:
+
+sudo ufw status		
+18)Changing time Zone:
+
 sudo dpkg-reconfigure tzdata
+Step-2
+Software Requirements:
+AWS account with lightsail service activated.
 
-select none from list and then select utc.
+1)Python Pip
 
-Installing Apache2
-In terminal
+2)Postgres
 
-sudo apt-get install apache2
+3)httplib2
 
-Now mod_wsgi
+4)SQLAlchemy
 
-sudo apt-get install python-setuptools libapache2-mod-wsgi
+5)Apache2
 
-Enable mod_wsgi
+6)Flask
 
-sudo a2enmod wsgi
+7)Virtualenv
 
-Setting up your flask application to work with apache2
-Creating a flask app
+8)Requests
 
-In /var/www directory create a new folder sudo mkdir FlaskApp
+9)Oauth2client
 
-Install git
+Installation Process for softwares:
+sudo apt-get install apache2		
 
-sudo apt-get install git
+ sudo apt-get install python-setuptools libapache2-mod-wsgi
 
-move to the FlaskApp cd FlaskApp
+ sudo a2enmod wsgi
 
-In that direcory clone your github repository
+ cd /var/www
 
-sudo git clone https://github.com/username/catalog.git
+ sudo mkdir FlaskApp
 
-Rename your repository to FlaskApp
+ sudo apt-get install git
 
-Then rename your project file to __init__.py
+ sudo apt-get install python-pip virtualenv
 
+ sudo virtualenv venv
+
+ sudo pip install Flask
+
+ sudo pip install postgresql oauth2client httplib2 requests psycopg2
+
+ cd /var/www/FlaskApp
+ 
+ sudo rm -r FlaskApp
+Rename your repository to FlaskApp to init.py
+
+ sudo mv project.py __init__.py
+In that directory clone your github repository
+
+ sudo git clone 'https://github.com/username/filename.git'
+Check once your files added or not
+
+Type ls
+
+Changing database in both database_setup.py and init.py
+
+sudo nano database_setup.py
+Open
+
+https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+
+Use this line to Replace database connection in init.py and database_setup.py
+
+engine = create_engine('postgresql://catalog:password@localhost/catalog')
 Error : While accesssing the client_secrets.json file
 
-PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
-json_url = os.path.join(PROJECT_ROOT, 'client_secrets.json')
-CLIENT_ID = json.load(open(json_url))['web']['client_id']
-Use json_url instead client_secrets.json in script
+PROJECT_ROOT = os.path.realpath(os.path.dirname(file)) json_url = os.path.join(PROJECT_ROOT, 'client_secrets.json') CLIENT_ID = json.load(open(json_url))['web']['client_id']
 
-Reffered from stack overflow
+Replace client_secrets.json with json_url in scriptfile
 
-Install and configuring postgresql for project
-Install Postgres sudo apt-get install postgresql
+ sudo apt-get install postgresql
 
-login to postgres sudo su - postgres
+ sudo su - postgres
 
-postgres shell psql
+ psql
+Now we have to create user
 
-create user CREATE USER catalog WITH PASSWORD 'password';
+ CREATE USER catalog WITH PASSWORD 'password';
+Create user
 
-permit user to createdb ALTER USER catalog CREATEDB;
+ALTER USER catalog CREATEDB;
+ALTER USER
 
-Create a db name catalog with user catalog CREATE DATABASE catalog WITH OWNER catalog;
+ CREATE DATABASE catalog WITH OWNER catalog;
+database created
 
-connect to db \c catalog
+Switch to database catalog
 
-revoke all permission to public REVOKE ALL ON SCHEMA public FROM public;
+\c catalog  
 
-Give schema permission to user catalog GRANT ALL ON SCHEMA public TO catalog;
+ REVOKE ALL ON SCHEMA public FROM public;
+REVOKE
 
-exit from db and postgres \q and exit
+ GRANT ALL ON SCHEMA public TO catalog;
+\q and type exit
 
-Change the database connection in both db_setup.py and __init__.py as engine = create_engine('postgresql://catalog:password@localhost/catalog')
+Change the database connection in both database_setup.py and init.py as
 
-Now you are ready with your applicatiom
+engine = create_engine('postgresql://catalog:password@localhost/catalog')
 
-Configure and Enable a New Virtual Host
-sudo nano /etc/apache2/sites-available/FlaskApp.conf
+Step-3
+Configure and Enable a New Virtual Host, then type the following code in the shell
 
-In this add the following code
+<VirtualHost *:80> ServerName mywebsite.com ServerAdmin admin@mywebsite.com WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi <Directory /var/www/FlaskApp/FlaskApp/> Order allow,deny Allow from all Alias /static /var/www/FlaskApp/FlaskApp/static <Directory /var/www/FlaskApp/FlaskApp/static/> Order allow,deny Allow from all ErrorLog ${APACHE_LOG_DIR}/error.log LogLevel warn CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-<VirtualHost *:80>
- 	ServerName mywebsite.com
- 	ServerAdmin admin@mywebsite.com
- 	WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi
- 	<Directory /var/www/FlaskApp/FlaskApp/>
- 		Order allow,deny
- 		Allow from all
- 	</Directory>
- 	Alias /static /var/www/FlaskApp/FlaskApp/static
- 	<Directory /var/www/FlaskApp/FlaskApp/static/>
- 		Order allow,deny
- 		Allow from all
- 	</Directory>
- 	ErrorLog ${APACHE_LOG_DIR}/error.log
- 	LogLevel warn
- 	CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-Enable the virtual host sudo a2ensite FlaskApp
+ sudo a2ensite FlaskApp
 
-Disabling the default apache2 page sudo a2dissite 000-default.conf
+ sudo a2dissite 000-default.conf
+.wsgi file
+ sudo nano flaskapp.wsgi
+Then add the below code
 
-Create the .wsgi File
-```
-cd /var/www/FlaskApp
-sudo nano flaskapp.wsgi 
-```
-Add the following code
+#!/usr/bin/python import sys import logging logging.basicConfig(stream=sys.stderr) sys.path.insert(0,"/var/www/FlaskApp/") from FlaskApp import app as application application.secret_key = 'Add your secret key'
 
-#!/usr/bin/python
- import sys
- import logging
- logging.basicConfig(stream=sys.stderr)
- sys.path.insert(0,"/var/www/FlaskApp/")
+press ctrl+x and y
 
- from FlaskApp import app as application
- application.secret_key = 'Add your secret key'
-save and exit
+Step-4
+Go to google console and change homeurl to
 
-Deploying flask app with apache2 is referred from Digital ocean
+http://ipaddress.xip.io\callback
 
-Installing require modules
-You can either install all modules on your machine or create a virtual environment for the project and install the modules pip install flask sqlalchemy psycopg2 requests oauth2client
+http://ipaddress.xip.io\gconnect
 
-Setting up your Google Oauth2
-Login to your developer console and select your project and edit OAuth details as following
+http://ipaddress.xip.io\login
 
-Javascript origin http://ip.xip.io
+FINAL STEP:
+ sudo service apache2 restart
+Then go to webbrowser and type your ipaddress finaly we get our project.
 
-redirect URI
+For error checking :
 
-http://ip.xip.io\login
+sudo nano /var/log/apache2/error.log
+**** My server Details
 
-http://ip.xip.io\gconnect
+   Server static IP Address 13.127.121.235
+**** Grader Key
 
-http://ip.xip.io\callback
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEA7EkNsz5WsXLu0Dg5E1A1+Py6Q0u61nTgCAJduqwc9JppB0oo
+31fW6yR5WPebcr/auXZ18wgAeElAiBSauDDzGsjF5UC7OEnp//qIKrfbCEulx1x7
+bt/iixiO4q9JEgsZaXmcnwa1ED//nFIqXbSNnfmNRZfDTfszZjyMvi73PqtxNPst
+0N9UZ6NuKzdGpBQ6UWG0Zg5i3O61pjL7YBuMxBJTiCLRz0oFygzD5jZUPnLtuCsN
+wy/eyk+xdXx9nC7FTKWB4EesyJ2QdOVJ6/vfC217s9N7QFxRkSt8Q5pCQ4mnqOlD
+GFrMDAogX56UofpYdQ5jfQyJEJVetNYLnFP++QIDAQABAoIBAQChT8aApoB9KOAN
+WzTsEIiocbGgG+V0X9pK3YKr3LDv9TLa/TAmOkvJwN7vdCu2DXD/yPYBc2cOt8PM
+o3R1Z0Ww9XzVZHnsldmhHqMzts1cPnjxQBwst8BsAdoavFyAav9wWMwqbWPTsj2J
+tTajPo6oWSSvbEqzxFl05MWZWWsGZqkoenas7x4iKjL6oIPyvWkHdD6OuoYVG2mQ
+mVuXCiCyRXcxUILJ24HWWoRfwf7z/Sk+iteGL+AdlWPGYMptj78I0glYMPvKAM1U
+yGkp73H83jykFRnoKPj++DTiC8lwFacvFyBcVDUhCskgrgtdR3RJM9wKm9e4qvtv
+VjLYsa4BAoGBAP3aMCt7rnGQBmciEeMKL0MA+rjGunDhZ9rNQC+ky5UwMJRROuUf
+pBlr/BfJOStPmQ0AeGCLkL3RJsoHgzymBJOk5r+l7f2Xd/orsYMkhwN+1IluvRhS
+ZuqLoetXvmC+/3EtsLKSq9vzXu1opWIfsnCqYVet03d9BWuaOnLlDZoZAoGBAO5I
+0U7NCepOs+tNvZghbA57Y0Zx8t3JfNxnWDqauSUQFmDNVLpJj1vTqrI2A3Me3ev0
+6HupWXLDI20irET81ddi9tpt7H3dhtBaIOUruE4tAnIdEkdAkDmOsN/+YcWBS5CA
+kDCPosbTCUYxU/dLEsPMah47Cw2LoMVUHOfgS+fhAoGBAJEhGMEDaOwMB10XIVrI
+C9UmzjCtjRHUDGgPSE70zF9yuZNSDXXI7SyLjAidRk34p+vDBQ9NO2cKGD8QpHsb
+/ynZ8QJIfxOocTNZn5b2XyokbKZV5U3ubmBRjDTcaT8ucyPll0vAhvis3uykE0lS
+DdZT0msqOefqVhr6hcgCJBChAoGBALxu1SaNupOR3XHsrkvJ0lu5c45XugltttHM
+39aoWFVY3Xl7ps8SMM4bGteHIz88X56is95m05ePfUpmqvh7QNftKO0fFG+MaXoG
+bBEOe9dGfLKlDrlN8z+w+WqJDeRUFN+W62+bhsvYQ3NAuvfKZHJ2Ck0Rv/HcQy0J
+ETrFAwHBAoGAOLXAwZFm12bnlH5kUN4cHVEx7D9aA7+25PwgE0eKwEZqV/JHBta6
+C1NfqKOJSt3XKVfYSoUbe8oe8vWuk25ZqG5METmiRbICfl88oiz3I8Ky5A/3d5jv
+YcLkoNg2oW0Bltbu6qKhxssFR5XBvOAGig74E3K9fZ5D+6Jb47glqK8=
+-----END RSA PRIVATE KEY-----
+Grader Password
+unix
 
-xip.io is a free DNS which will be the same as using IP address
+OUTPUT:
+CLICK HERE http://13.127.121.235.xip.io
 
-Final Step
-Restart your apache2 server
+Reference used:
+https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
 
-sudo service apache2 restart
+
+
+
