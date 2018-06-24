@@ -67,7 +67,7 @@ From left tree, click on SSH. after, Auth. You will see browser button. click on
 7)Creating grader User:
 
     sudo apt update 
-    sudo apt upgrade
+    sudo apt upgrade  
     sudo adduser grader
     
 Follow the following steps:
@@ -119,6 +119,8 @@ Then change it.
     sudo nano /etc/ssh/sshd_config
     
 ###### Make change PermitRootLogin no
+
+For reference I place screenshot check once.
 
 16)Uncomplicated firewall(ufw) enbling:
 
