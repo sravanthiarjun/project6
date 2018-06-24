@@ -1,3 +1,5 @@
+# Linux-Server-Configuration
+## In this project I deploy my build an item catalog project to an instance using a Linux server instance called Amazon Lightsail
 Step-1
 
 1)Create an amazon account.
@@ -21,7 +23,8 @@ From left tree, click on SSH. after, Auth. You will see browser button. click on
 ssh -i path/to/privatekey -p 2200 grader@ip address				
 7)Creating grader User:
 
-ubuntu@ip-172-26-0-113:~$ sudo apt update 	
+    sudo apt update 
+    sudo apt upgrade
 
 sudo adduser grader		
 Follow the following steps:
@@ -249,6 +252,7 @@ ETrFAwHBAoGAOLXAwZFm12bnlH5kUN4cHVEx7D9aA7+25PwgE0eKwEZqV/JHBta6
 C1NfqKOJSt3XKVfYSoUbe8oe8vWuk25ZqG5METmiRbICfl88oiz3I8Ky5A/3d5jv
 YcLkoNg2oW0Bltbu6qKhxssFR5XBvOAGig74E3K9fZ5D+6Jb47glqK8=
 -----END RSA PRIVATE KEY-----
+
 Grader Password
 unix
 
